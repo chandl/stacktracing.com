@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+const posts = (await getCollection('posts')).sort((a, b) => +b.data.date - +a.data.date);
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+<Base>
+  <p class="section-label"><b>01</b> / posts</p>
+  <h1 class="title">stacktracing</h1>
+  <p class="sub">Notes on software, infrastructure and tinkering.</p>
+  <ul class="cards">
+    {posts.map((p) => (
+      <li>
+        <a class="card" href={p.data.wpPath}>
+          {p.data.image && <img class="card-img" src={p.data.image} alt="" loading="lazy" />}
+          <div class="card-body">
+            <span class="card-meta">{fmt(p.data.date)}</span>
+            <h2 class="card-title">{p.data.title}</h2>
+            {p.data.description && <p class="card-desc">{p.data.description}</p>}
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Base>

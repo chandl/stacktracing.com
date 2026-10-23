@@ -1,0 +1,20 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts')).map((e) => ({ params: { slug: e.id }, props: { e, post: true } }));
+  const pages = (await getCollection('pages')).map((e) => ({ params: { slug: e.id }, props: { e, post: false } }));
+  return [...posts, ...pages];
+}
+const { e, post } = Astro.props;
+const { Content } = await render(e);
+---
+<Base title={e.data.title} description={e.data.description || undefined} image={e.data.image} type={post ? 'article' : 'website'}>
+  <article class="article">
+    {post && <p class="section-label"><b>#</b> {e.data.date.toISOString().slice(0, 10)}</p>}
+    <h1 class="title">{e.data.title}</h1>
+    {post && e.data.image && <img class="cover" src={e.data.image} alt="" />}
+    <div class="prose"><Content /></div>
+  </article>
+</Base>
